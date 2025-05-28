@@ -1,4 +1,4 @@
-import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Post, UploadedFile, UseInterceptors, Get } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { FilesService } from './files.service';
@@ -11,6 +11,11 @@ export class FilesController {
         if (!fs.existsSync('./uploads')) {
             fs.mkdirSync('./uploads', { recursive: true });
         }
+    }
+
+    @Get()
+    async getAllFiles() {
+        return this.filesService.getAllFiles();
     }
 
     @Post()
