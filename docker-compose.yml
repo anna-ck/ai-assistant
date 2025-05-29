@@ -1,6 +1,8 @@
 version: '3.8'
 services:
   postgres:
+    # the pgvector extension is used to store the embeddings
+    # regular postgres image does not have the pgvector extension
     image: ankane/pgvector
     container_name: ai-assistant-postgres
     environment:
