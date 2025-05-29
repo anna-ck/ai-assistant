@@ -30,7 +30,7 @@ export const FileQuestion = () => {
         fileId: selectedFileId,
         question,
       });
-      setAnswer(result.answer);
+      setAnswer(result.data);
     } catch (error) {
       console.error('Failed to get answer:', error);
     }

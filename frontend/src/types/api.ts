@@ -5,7 +5,7 @@ export interface FileInfo {
 }
 
 export interface AskResponse {
-  answer: string;
+  data: string;
 }
 
 export interface ApiError {

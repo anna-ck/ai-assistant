@@ -1,28 +1,29 @@
 import { Injectable } from '@nestjs/common';
+import OpenAI from "openai";
 
 @Injectable()
 export class OpenaiService {
+    private openai: OpenAI;
 
-    getEmbedding = async (text: string): Promise<number[]> => {
-        try {
-            const response = await fetch('https://api.openai.com/v1/embeddings', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-                },
-                body: JSON.stringify({
-                  input: text,
-                  model: 'text-embedding-3-small',
-                }),
-              });
-            
-              const data = await response.json();
-              console.log('data', data);
-              return data.data[0].embedding;
-        } catch (error) {
-            console.error('Error getting embedding:', error);
-            throw new Error('Failed to get embedding: ' + error.message);
-        }
+    constructor() {
+        this.openai = new OpenAI({
+          apiKey: process.env.OPENAI_API_KEY,
+        });
       }
+    
+      async getEmbedding(text: string): Promise<number[]> {
+        const response = await this.openai.embeddings.create({
+          model: "text-embedding-3-small",
+          input: text,
+        });
+        return response.data[0].embedding;
+      }
+
+      async chatCompletion(prompt: string): Promise<string> {
+        const response = await await this.openai.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: prompt }],
+        });
+      return response.choices[0].message.content;
+    }
 }

@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { OpenaiModule } from './openai/openai.module';
 import { DataSource } from 'typeorm';
+import { AskModule } from './ask/ask.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { DataSource } from 'typeorm';
     }),
     FilesModule,
     OpenaiModule,
+    AskModule,
   ],
   controllers: [AppController],
   providers: [AppService],
