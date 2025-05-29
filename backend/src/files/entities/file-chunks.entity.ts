@@ -4,7 +4,7 @@ import { File } from "./file.entity";
 @Entity()
 export class FileChunk {
     @PrimaryGeneratedColumn('uuid')
-    id: number; 
+    id: string; 
 
     @Column('text')
     content: string;

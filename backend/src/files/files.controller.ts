@@ -1,8 +1,9 @@
-import { Controller, Post, UploadedFile, UseInterceptors, Get } from '@nestjs/common';
+import { Controller, Post, UploadedFile, UseInterceptors, Get, Body } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { FilesService } from './files.service';
 import * as fs from 'fs';
+import { FileQuestionsDto } from './dto/file-questions.dto';
 
 @Controller('files')
 export class FilesController {
@@ -16,6 +17,16 @@ export class FilesController {
     @Get()
     async getAllFiles() {
         return this.filesService.getAllFiles();
+    }
+
+    @Post(':fileId/questions')
+    async getQuestions(@Body() fileQuestionsDto: FileQuestionsDto) {
+        return this.filesService.getQuestions(fileQuestionsDto.fileId);
+    }
+
+    @Get('questions')
+    async getAllQuestions() {
+        return this.filesService.getAllQuestions();
     }
 
     @Post()

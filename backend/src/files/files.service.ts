@@ -7,6 +7,8 @@ import { OpenaiService } from '../openai/openai.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { File } from './entities/file.entity';
+import { Question } from '../ask/entities/question.entity';
+
 @Injectable()
 export class FilesService {
     constructor(
@@ -14,6 +16,8 @@ export class FilesService {
         private fileChunkRepository: Repository<FileChunk>,
         @InjectRepository(File)
         private fileRepository: Repository<File>,
+        @InjectRepository(Question)
+        private questionRepository: Repository<Question>,
         private openaiService: OpenaiService,
     ) {}
 
@@ -68,6 +72,36 @@ export class FilesService {
         } catch (error) {
             console.error('Error fetching files:', error);
             throw new Error('Failed to fetch files: ' + error.message);
+        }
+    }
+
+    async getQuestions(fileId: string) {
+        return this.questionRepository.find({
+            where: { file: { id: fileId } },
+            order: { askedAt: 'DESC' },
+            relations: ['file']
+        });
+    }
+
+    async getAllQuestions() {
+        return this.questionRepository.find({
+            order: { askedAt: 'DESC' },
+            relations: ['file']
+        });
+    }
+
+    async saveQuestion(question: string, answer: string, fileId: string) {
+        const file = await this.fileRepository.findOne({
+            where: { id: fileId },
+            relations: ['chunks']
+        });
+
+        if (file) {
+            const questionEntity = new Question();
+            questionEntity.question = question;
+            questionEntity.answer = answer;
+            questionEntity.file = file;
+            await this.questionRepository.save(questionEntity);
         }
     }
 }

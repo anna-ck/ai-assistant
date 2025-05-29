@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { FilesService } from 'src/files/files.service';
 import { OpenaiService } from 'src/openai/openai.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository, DataSource } from 'typeorm';
-import { FileChunk } from 'src/files/entities/file-chunks.entity';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class AskService {   
         constructor(
         private readonly openaiService: OpenaiService,
+        private readonly fileService: FilesService,
         private dataSource: DataSource,
     ) {}
 
-    async ask(question: string, fileId: number) {
+    async ask(question: string, fileId: string) {
         const embedding = await this.openaiService.getEmbedding(question);
         const embeddingString = JSON.stringify(embedding);
         const chunks = await this.dataSource.query(
@@ -34,6 +34,8 @@ export class AskService {
           `;
         
           const answer = await this.openaiService.chatCompletion(prompt);
+
+          await this.fileService.saveQuestion(question, answer, fileId);
         
           return {
             data: answer
